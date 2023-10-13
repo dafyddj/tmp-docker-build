@@ -9,3 +9,8 @@ repos:
     -   id: check-yaml
         exclude: ^kitchen.yml$
     -   id: check-added-large-files
+  - repo: https://github.com/AleksaC/hadolint-py
+    rev: v2.12.0.3
+    hooks:
+      - id: hadolint
+        args: [--ignore, DL3006]
