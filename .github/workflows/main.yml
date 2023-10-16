@@ -1,0 +1,71 @@
+name: Test & release `build.yml` workflow
+
+on:
+  pull_request:
+  push:
+  schedule:
+    - cron: 18 15 * * *
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pre-commit:
+    name: Run `pre-commit`
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+    - uses: pre-commit/action@v3.0.0
+  run-workflow:
+    uses: ./.github/workflows/build.yml
+    permissions:
+      contents: write
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        registry: [docker.io, ghcr.io]
+    with:
+      docker-registry: ${{ matrix.registry }}
+    secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+      registry-password: ${{ matrix.registry == 'ghcr.io' && secrets.GITHUB_TOKEN || secrets.DOCKERHUB_TOKEN }}
+  release:
+    name: Release
+    needs:
+      - pre-commit
+      - run-workflow
+    permissions:
+      contents: write
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run `semantic-release`
+        uses: codfish/semantic-release-action@v2
+        id: sem-rel
+        with:
+          branches: |
+            ["main"]
+          plugins: |
+            [ "@semantic-release/commit-analyzer",
+              "@semantic-release/release-notes-generator",
+              "@semantic-release/github"
+            ]
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Update branch for major version
+        if: steps.sem-rel.outputs.new-release-published == 'true'
+        run: git push
+             https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+             HEAD:refs/heads/v${{steps.sem-rel.outputs.release-major}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Update Healthchecks.io
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        run: curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/${HC_UUID}
+        env:
+          HC_UUID: ${{ secrets.HC_UUID }}
