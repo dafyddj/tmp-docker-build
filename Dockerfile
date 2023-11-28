@@ -1,4 +1,3 @@
-# Use the official "hello-world" image as the base image
-FROM hello-world
+FROM debian:stable-slim
 
-# There's no need to specify any additional instructions or commands
+CMD ["echo", "Hello World!"]
