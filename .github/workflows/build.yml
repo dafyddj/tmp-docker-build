@@ -57,6 +57,9 @@ jobs:
         uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
         with:
           images: ${{ inputs.docker-registry }}/${{ inputs.image-name }}
+          labels: |
+            org.opencontainers.image.authors=Dafydd Jones <dafydd@techneg.it>
+            org.opencontainers.image.description=An image build for testing `${{ github.repository }}`
 
       - name: Install Test Kitchen
         uses: actionshub/chef-install@2.0.4
