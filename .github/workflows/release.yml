@@ -5,7 +5,9 @@ on:
 
 jobs:
   build:
-    name: Build Docker images
+    name: Build & Release Docker images
+    permissions:
+      packages: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
