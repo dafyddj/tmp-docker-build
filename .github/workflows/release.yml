@@ -28,7 +28,6 @@ jobs:
             org.opencontainers.image.authors=Dafydd Jones <dafydd@techneg.it>
 
       - name: Log in to registry `${{ inputs.docker-registry }}`
-        if: inputs.release == true
         uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
         with:
           registry: ghcr.io
@@ -37,7 +36,6 @@ jobs:
 
 
       - name: Build and push Docker image
-        if: inputs.release == true
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
         with:
           context: .
