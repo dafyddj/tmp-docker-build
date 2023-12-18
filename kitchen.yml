@@ -11,7 +11,7 @@ verifier:
 platforms:
   - name: test
     driver:
-      image: dafyddj/workflow-docker-build:local-test
+      image: dafyddj/tmp-docker-build:local-test
       platform: debian
 
 suites:

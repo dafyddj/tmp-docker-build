@@ -30,7 +30,7 @@ jobs:
         with:
           context: .
           load: true
-          tags: ${{ inputs.image-name }}:local-test
+          tags: dafyddj/tmp-docker-build:local-test
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Install Test Kitchen
