@@ -1,4 +1,4 @@
-name: Build Docker images
+name: Build & Test
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Build Docker images
+    name: Build & test
     runs-on: ubuntu-latest
     permissions:
       contents: write
