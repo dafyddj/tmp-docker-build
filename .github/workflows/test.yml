@@ -54,4 +54,4 @@ jobs:
               "@semantic-release/github"
             ]
         env:
-          GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
+          GH_TOKEN: ${{ secrets.PUSH_TOKEN }}
