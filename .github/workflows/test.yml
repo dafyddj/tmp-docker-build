@@ -3,6 +3,8 @@ name: Build & Test
 on:
   pull_request:
   push:
+    branches:
+      - '**'
 #  schedule:
 #    - cron: 18 15 * * *
   workflow_dispatch:
@@ -11,14 +13,11 @@ jobs:
   build:
     name: Build & test
     runs-on: ubuntu-latest
-#    permissions:
-#      contents: write
-#      packages: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          persist-credentials: false
+          persist-credentials: false    # Prevent credentials conflict when running `semantic-release`
       - name: Debug on runner (When re-run with "Enable debug logging" checked)
         if: runner.debug
         uses: mxschmitt/action-tmate@v3
@@ -56,5 +55,4 @@ jobs:
               "@semantic-release/github"
             ]
         env:
-          GH_TOKEN: ${{ secrets.PUSH_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
