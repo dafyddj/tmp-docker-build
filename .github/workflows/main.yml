@@ -29,6 +29,8 @@ jobs:
         registry: [docker.io, ghcr.io]
     with:
       docker-registry: ${{ matrix.registry }}
+      image-namespace: ${{ github.repository_owner }}
+      image-repo: tmp-workflow-build
     secrets:
       registry-password: ${{ matrix.registry == 'ghcr.io' && secrets.GITHUB_TOKEN || secrets.DOCKERHUB_TOKEN }}
 #  release:
