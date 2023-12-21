@@ -25,8 +25,8 @@ jobs:
     steps:
       - id: get-repo-id
         run: |
-          repo-id=$(echo ${{ github.repository }}| cut -d'/' -f2)
-          echo "::set-output name=repo-id::$repo-id"
+          REPO_ID=$(echo ${{ github.repository }} | cut -d'/' -f2)
+          echo "repo-id=$REPO_ID" >> $GITHUB_OUTPUT
   run-workflow:
     name: Run workflow
     needs: gri
