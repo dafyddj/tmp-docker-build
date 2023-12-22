@@ -41,6 +41,7 @@ jobs:
       docker-registry: ${{ matrix.registry }}
       image-namespace: ${{ github.repository_owner }}
       image-repo: ${{ needs.gri.outputs.repo-id }}
+      labels: org.opencontainers.image.authors=AN Author <author@example.org>
       release: false
     secrets:
       registry-password: ${{ matrix.registry == 'ghcr.io' && secrets.GITHUB_TOKEN || secrets.DOCKERHUB_TOKEN }}
