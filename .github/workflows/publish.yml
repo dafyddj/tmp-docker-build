@@ -12,15 +12,14 @@ on:
       image-repo:
         required: true
         type: string
+      labels:
+        type: string
       registry-username:
         type: string
         default: ${{ github.repository_owner }}
       release:
         type: boolean
         default: true
-      tag:
-        type: string
-        default: latest
     secrets:
       registry-password:
         required: true
@@ -46,8 +45,7 @@ jobs:
         uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
         with:
           images: ${{ inputs.docker-registry }}/${{ inputs.image-namespace }}/${{ inputs.image-repo }}
-#          labels: |
-#            org.opencontainers.image.authors=Dafydd Jones <dafydd@techneg.it>
+          labels: ${{ inputs.labels }}
       - name: Log in to registry
         uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
         with:
