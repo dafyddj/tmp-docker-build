@@ -45,11 +45,24 @@ jobs:
       release: false
     secrets:
       registry-password: ${{ matrix.registry == 'ghcr.io' && secrets.GITHUB_TOKEN || secrets.DOCKERHUB_TOKEN }}
+  run-test-workflow:
+    name: Run `test` workflow
+    needs: gri
+    uses: ./.github/workflows/test.yml
+    permissions:
+      contents: write
+    with:
+      image-namespace: ${{ github.repository_owner }}
+      image-repo: ${{ needs.gri.outputs.repo-id }}
+      release: false
+    secrets:
+      push-token: ${{ secrets.GITHUB_TOKEN }}
   release:
     name: Release
     needs:
       - pre-commit
       - run-publish-workflow
+      - run-test-workflow
     permissions:
       contents: write
       packages: write
