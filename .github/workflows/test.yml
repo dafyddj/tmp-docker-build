@@ -1,17 +1,24 @@
-name: Build & Test
+name: Build & test image
 
 on:
-  pull_request:
-  push:
-    branches:
-      - '**'
-#  schedule:
-#    - cron: 18 15 * * *
-  workflow_dispatch:
+  workflow_call:
+    inputs:
+      image-namespace:
+        required: true
+        type: string
+      image-repo:
+        required: true
+        type: string
+      release:
+        type: boolean
+        default: true
+    secrets:
+      push-token:
+        required: true
 
 jobs:
   build:
-    name: Build & test
+    name: Build & test image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -25,13 +32,12 @@ jobs:
           detached: true
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
-
       - name: Build and export locally to Docker
         uses: docker/build-push-action@v5
         with:
           context: .
           load: true
-          tags: dafyddj/tmp-docker-build:local-test
+          tags: ${{ inputs.image-namespace }}/${{ inputs.image-repo }}:local-test
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Install Test Kitchen
@@ -49,10 +55,11 @@ jobs:
         uses: codfish/semantic-release-action@v3
         id: sem-rel
         with:
+          dry-run: ${{ !inputs.release }}
           plugins: |
             [ "@semantic-release/commit-analyzer",
               "@semantic-release/release-notes-generator",
               "@semantic-release/github"
             ]
         env:
-          GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.push-token }}
